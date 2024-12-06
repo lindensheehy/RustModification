@@ -1,0 +1,83 @@
+NOTES
+
+Plan:
+- esp cheat with circles representing players/scientists
+- circle would get bigger as player approaches
+- color could indicate health and if theyre on my team
+
+Stuff:
+- Rust uses unity game engine
+- players would likely be stored as GameObjects, which would each have attributes like transform
+
+Execution:
+- look around in cheat engine to find pieces of memory which may be useful.
+- aob scanning all the memory is not feasible
+- can maybe hook into unitys drawing api for graphical overlay, if not windows api could work.
+
+
+MEMORY STRUCTURE:
+
+- vectors are near each other in memory as floats. 0x0 -> x, 0x4 -> y, 0x8 -> z
+
+- one of the many player positions has the following structure
+
+    - 0x0 -> parent pointer
+        - 0x60 -> 0
+        - 0x64 -> player facing x
+        - 0x68 -> 0
+        - 0x6C -> player facing z
+        - 0x70 -> player pos x
+        - 0x74 -> player pos y
+        - 0x78 -> player pos z
+
+- hunger and thirst both have 3 internal values. one acting as a counter, one storing the last 'step', and one storing the next 'step'.
+
+    - the steps are as follows
+        - 0x0 -> hunger pointer
+            - 0x20 -> next step
+            - 0x24 -> last step
+        - 0x8 -> thirst pointer
+            - 0x20 -> next step
+            - 0x24 -> last step
+
+    - counters are as follows
+        - 0x0 -> thirst
+        - 0x50 -> hunger
+
+    - no clear relation between counters and steps
+
+- master list (maybe)
+- this list seems to hold a BUNCH of stuff in game. im seeing things like names, scientists, shrubery, etc
+
+    - 0x12** -> player
+        - 0x0 -> 0x10 -> character information. nothing super helpful, but does a good job telling what the character is
+        - 0x28 -> asset info
+            - 0x10 -> number. maybe linked to the path somehow
+            - 0x14 -> path to something, probably the mesh
+        - 0x1A0 -> 0x0 -> 0x10 -> SkeletonProperties
+        - 0x250 -> 0x0 -> 0x10 -> PlayerModel
+        - 0x288 -> 0x14 -> player steam id
+        - 0x2A0 -> 0x14 -> PLAYER NAME!!!
+        - 0x368 -> 0x0 -> 0x10 -> ViewModel
+        - 0x370 -> 0x20 -> 0x10 -> TRANSFORM????
+
+- Player health hook
+    GameAssembly.dll+4B3BD96 
+
+
+rust commands:
+- printpos
+- teleportpos
+- entity.spawn
+- debug.noclip
+
+
+assembly structure:
+- list flag determines which list is the 'write list' for the internal cheat to use
+- external cheat will update this flag every 0.1 seconds (10fps), then after updating it will wait a short time (say 0.01s) to let threads still working finish
+- once the 'read list' is safe to use, the external cheat can use it until the next 0.1s period, at which point it will wipe the list to all 0s and repeat above
+
+post update notes:
+- scientist position was 4th on the search list based on a groupscan looking for the in game coordinates after entity.spawn
+- hook instruction AOB: F2 0F 11 87 D0 01 00 00 89 87 D8 01 00 00
+GameAssembly.dll+40C221D may be pre culling
