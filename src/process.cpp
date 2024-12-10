@@ -353,7 +353,7 @@ Cheat::Cheat(Process* process) {
 
     // Find GameAssembly.dll and hook address
     this->addr.gameAssemblyDll = this->process->getModuleBase("GameAssembly.dll");
-    this->addr.hookInstruction = (this->addr.gameAssemblyDll) + 0x11BA71F;
+    this->addr.hookInstruction = (this->addr.gameAssemblyDll) + 0x242FBCF;
 
     // Do the injection
     this->doInjection();
@@ -636,9 +636,6 @@ CharacterList* Cheat::getList() {
 
     // The byte 0x01 indicates list2, which translates to true as a bool
     bool useList2 = this->flipListFlag();
-    
-    logWrite("Flipped list flag!", true);
-    std::cout << "Flipped list flag!\n";
 
     Sleep(20);
 
@@ -651,9 +648,6 @@ CharacterList* Cheat::getList() {
         ret = this->getList1();
         this->wipeList1();
     }
-
-    logWrite("Stored and reset list!", true);
-    std::cout << "Stored and reset list!\n";
 
     return ret;
 

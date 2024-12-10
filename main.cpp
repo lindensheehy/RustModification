@@ -28,7 +28,7 @@ HWND window;
 RECT windowDim;
 
 
-// Early Declarations
+// Early Declaration
 void draw(HWND hwnd, HDC hdc);
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -117,6 +117,7 @@ HWND CreateTransparentWindow() {
 }
 
 void draw(HWND hwnd, HDC hdc) {
+    
     FontFamily  fontFamily(L"Times New Roman");
     Font        font(&fontFamily, 32, FontStyleRegular, UnitPixel);
     PointF      pointF(30.0f, 10.0f);
@@ -142,7 +143,7 @@ void draw(HWND hwnd, HDC hdc) {
     characters->projectAll();
 
     // Define pen to use
-    Pen rectanglePen(Color(175, 125, 0, 125), 2);
+    Pen rectanglePen(Color(255, 255, 20, 147), 1);
 
     // Iterator over characters
     Character* current;
@@ -193,6 +194,28 @@ void draw(HWND hwnd, HDC hdc) {
 
 }
 
+
+// Clean up on close
+BOOL WINAPI ConsoleHandler(DWORD event) {
+
+    if (event == CTRL_CLOSE_EVENT || event == CTRL_C_EVENT || event == CTRL_BREAK_EVENT) {
+
+        std::cout << "Cleaning up resources before closing...\n";
+        std::cout << "Exiting program and cleaning up resources...\n";
+
+        delete cheat;
+        delete process;
+
+        std::cout << "Closed Handle\n";
+
+        system("pause");
+
+        return TRUE; // Signal handled
+    }
+
+    return FALSE; // Let the system handle it
+
+}
 
 int setup() {
 
@@ -320,9 +343,13 @@ void doInput(const std::string& input, bool* quit) {
 
 int main() {
 
+    // Force clean up on close
+    SetConsoleCtrlHandler(ConsoleHandler, TRUE);
+
     int setupStatus = setup();
     if (setupStatus == -1) return -1;
 
+    std::cout << "Looking for player...\n";
 
     // Locate player in character list. Cant really draw anything until this happens
     while (playerAddress == 0) {
@@ -347,9 +374,15 @@ int main() {
 
         }
 
+        Sleep(200);
+
         characters = cheat->getList();
 
     }
+
+    std::cout << "Player found!\n\n";
+
+    std::cout << "Creating overlay\n";
 
 
     // Main Loop
@@ -369,8 +402,8 @@ int main() {
 
 
     std::cout << "Exiting program and cleaning up resources...\n";
-    delete process;
     delete cheat;
+    delete process;
     std::cout << "Closed Handle\n";
     system("pause");
     return 0;
