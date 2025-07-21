@@ -1,6 +1,7 @@
 :: Build libraries
 
 :: Paths
+set srcdir=../src/
 set objdir=../obj/
 
 
