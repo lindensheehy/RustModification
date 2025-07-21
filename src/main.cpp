@@ -6,10 +6,10 @@
 #include <ObjIdl.h>
 #include <gdiplus.h>
 
-#include "include/log.h"
-#include "include/utility.h"
-#include "include/aob.h"
-#include "include/process.h"
+#include "../include/log.h"
+#include "../include/utility.h"
+#include "../include/aob.h"
+#include "../include/process.h"
 
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")

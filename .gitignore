@@ -1,2 +1,4 @@
-src/
+# Generated files
+*.exe
 *.o
+build/log.txt

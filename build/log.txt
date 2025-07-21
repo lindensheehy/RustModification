@@ -1,9 +1,0 @@
-Successfully attached to process!
-Allocated memory at: 0x130F2480000
-Successfully instantiated Cheat!
-Activated Hook!
-Found Player!
-Cannot project before defining camera!
-Cannot project before defining camera!
-Deactivated Hook!
-Released allocated memory.

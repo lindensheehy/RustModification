@@ -5,7 +5,7 @@ set objdir=../obj/
 
 
 :: Compile main.exe
-g++ ../main.cpp ^
+g++ %srcdir%main.cpp ^
     %objdir%log.o ^
     %objdir%math.o ^
     %objdir%utility.o ^
