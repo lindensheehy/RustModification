@@ -17,10 +17,16 @@ This project showcases a graphical extra sensory perception (ESP)-style overlay 
 - [Features](#features)
 - [Screenshot](#screenshot)
 - [Development Breakdown](#development-breakdown)
+  - [Reverse Engineering](#reverse-engineering)
+  - [C++ Hooking](#cpp-hooking)
+  - [Data Sharing](#data-sharing)
+  - [Overlay Rendering](#overlay-rendering)
 - [Technical Notes](#technical-notes)
 - [Requirements](#requirements)
-- [🚀 Build & Run](#build--run)
+- [🚀 How to Run](#how-to-run)
+  - [Build Requirements](#build-requirements)
 - [📄 License](#license)
+  - [Ethical Use Notice](#ethical-use-notice)
 - [Possible Improvements](#possible-improvements)
 - [📝 Final Thoughts](#final-thoughts)
 
@@ -65,21 +71,25 @@ Since this app won’t function with the current version of Rust, I’ve also in
 
 <h2 id="development-breakdown">Development Breakdown</h2>
 
-<h3 id="reverse-engineering">1. Reverse Engineering</h3>
+<h3 id="reverse-engineering">Reverse Engineering</h3>
+
 - Used **Cheat Engine** to identify instructions accessing positional data for players.
 - Located a post-culling instruction that provided visible entity positions.
 - This step took ~12 hours of scanning and tracing memory reads. Rust *really* did not make my life easy here. 😅
 
-<h3 id="cpp-hooking">2. C++ Hooking</h3>
+<h3 id="cpp-hooking">C++ Hooking</h3>
+
 - Wrote a Windows application, leveraging pieces from a prior modding project.
 - Located the relevant instruction in `GameAssembly.dll` using static offsets from module base.
 - Injected **assembly bytecode** to intercept that instruction and log addresses to a set.
 
-<h3 id="data-sharing">3. Data Sharing</h3>
+<h3 id="data-sharing">Data Sharing</h3>
+
 - Built a **double-buffered memory structure** that gets injected into the game process. For more details, check out `asm/README.md`
 - Parsed the entity base addresses into structured 3D positional data ready for rendering.
 
-<h3 id="overlay-rendering">4. Overlay Rendering</h3>
+<h3 id="overlay-rendering">Overlay Rendering</h3>
+
 - Used `GDI+` and `Win32` to draw a transparent overlay on top of the game window.
 - Approximate projection using a perspective matrix. Not 1:1 with Unity’s, but serviceable.
 - Rendered bounding boxes in real time based on entity positions.
@@ -104,12 +114,23 @@ Since this app won’t function with the current version of Rust, I’ve also in
 
 ---
 
-<h2 id="build--run">🚀 Build & Run</h2>
+<h2 id="how-to-run">🚀 How to Run</h2>
 
-1. Clone the repository.
-2. Build the executable with `build/BuildAll.bat`
+1. Clone this repository.
+2. Run `build/BuildAll.bat`.
 3. Launch Rust in a private server or test environment.
-4. Run the executable (`build/main.exe`)
+4. Run the generated executable (`build/main.exe`).
+
+<h3 id="build-requirements">Build Requirements</h3>
+
+This engine is **Windows-only** and depends on `windows.h`.
+
+- **Compiler**: GCC via MinGW (uses `g++` under the hood)
+- **Architecture**: Built and tested for **x86_64 (64-bit)** systems
+- **Standard**: Written for **C++17**
+
+⚠️ **Note**: This project has very limited testing outside my own development environment.  
+Your mileage may vary depending on your compiler version or system configuration.
 
 ---
 
